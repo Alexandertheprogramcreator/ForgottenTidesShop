@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ForgottenTides General Store</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f3efe6; --surface:#fffdf8; --ink:#23302a; --muted:#66716a; --line:#d9d2c1;
+  --accent:#2f6b4f; --tag:#e8e1cf; --banner:#23302a; --bannerink:#f3efe6;
+  --font:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#161c18; --surface:#1f2822; --ink:#ece8dc; --muted:#9aa59d; --line:#33403a;
+    --accent:#7cc9a0; --tag:#2b362f; --banner:#ece8dc; --bannerink:#161c18;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161c18; --surface:#1f2822; --ink:#ece8dc; --muted:#9aa59d; --line:#33403a;
+  --accent:#7cc9a0; --tag:#2b362f; --banner:#ece8dc; --bannerink:#161c18;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.banner{background:var(--banner);color:var(--bannerink);text-align:center;padding:.6rem 1rem;font-size:.95rem}
+header{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;max-width:1080px;margin:0 auto;padding:1.25rem 1.25rem .5rem}
+.logo{font-family:var(--serif);font-size:1.7rem;font-weight:700;letter-spacing:-.02em}
+nav{display:flex;gap:1.25rem;color:var(--muted)}
+nav a{color:inherit;text-decoration:none}
+nav a:hover,nav a:focus-visible{color:var(--ink);text-decoration:underline}
+.cart{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.45rem .9rem;border-radius:999px;font:inherit;cursor:pointer}
+.cart:focus-visible,.notify:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{max-width:1080px;margin:0 auto;padding:1rem 1.25rem 3rem}
+.hero{padding:2.5rem 0 1.5rem;max-width:36rem}
+.hero h1{font-family:var(--serif);font-size:clamp(2rem,6vw,3.2rem);line-height:1.1;margin:0 0 .75rem;letter-spacing:-.02em}
+.hero p{color:var(--muted);font-size:1.1rem;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.1rem;margin-top:1.5rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:.5rem}
+.pic{position:relative;aspect-ratio:1/1;border-radius:10px;background:var(--tag);display:grid;place-items:center;font-size:4.5rem;overflow:hidden}
+.pic img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);opacity:.55}
+.pic::after{content:"Out of stock";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);background:var(--bannerink);color:var(--ink);border:2px solid var(--ink);padding:.15rem .6rem;font-size:.85rem;font-weight:700;border-radius:6px;white-space:nowrap}
+.card h2{font-size:1.05rem;margin:.25rem 0 0}
+.price{color:var(--muted);text-decoration:line-through;font-size:.95rem}
+.restock{color:var(--muted);font-size:.9rem}
+.notify{margin-top:auto;border:1px solid var(--accent);background:transparent;color:var(--accent);padding:.5rem;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+.notify:hover{background:var(--accent);color:var(--surface)}
+.notify[disabled]{opacity:.7;cursor:default;background:var(--tag);color:var(--ink);border-color:var(--line)}
+.signup{margin-top:2.5rem;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.5rem}
+.signup h2{font-family:var(--serif);margin:0 0 .25rem}
+.signup p{margin:0 0 1rem;color:var(--muted)}
+.row{display:flex;gap:.6rem;flex-wrap:wrap}
+input{flex:1 1 220px;padding:.65rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.row button{padding:.65rem 1.1rem;border:0;border-radius:8px;background:var(--accent);color:var(--surface);font:inherit;font-weight:700;cursor:pointer}
+#msg{min-height:1.4em;margin-top:.75rem;color:var(--accent);font-weight:700}
+footer{text-align:center;color:var(--muted);padding:1.5rem 1rem 2rem;border-top:1px solid var(--line);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="banner">Every item is currently sold out. Fresh stock is on its way.</div>
+<header>
+  <div class="logo">ForgottenTides</div>
+  <nav aria-label="Main"><a href="#shop">Shop</a><a href="#restock">Restock alerts</a></nav>
+  <button class="cart" type="button" id="cart">Cart (0)</button>
+</header>
+<main>
+  <section class="hero">
+    <h1>We're restocking the shelves...</h1>
+    <p>Everything sold faster than we expected. New batches are being packed now and will be back soon.</p>
+  </section>
+
+  <section id="shop" aria-label="Products">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="signup" id="restock">
+    <h2>Get told when we're back</h2>
+    <p>Leave your email and we'll send one message when the shelves are full again.</p>
+    <div class="row">
+      <input id="email" type="email" placeholder="you@example.com" aria-label="Email address">
+      <button type="button" id="join">Notify me</button>
+    </div>
+    <div id="msg" role="status"></div>
+  </section>
+</main>
+<footer>&copy; 2026 Forgotten &amp; Tides General Store. Back soon.</footer>
+
+<script>
+/* ===== SETUP: put your images in an "images" folder next to this file =====
+   Name each image after the product's file name below, e.g. images/pine-candle.jpg
+   Supported types: jpg, jpeg, png, webp. Add or rename products in this list. */
+const IMAGE_FOLDER="images/";
+const EXTENSIONS=["jpg","jpeg","png","webp"];
+const items=[
+  ["Lone Lost Raft Stranded Ocean","Sweatshirt","$18.00","Back in 3-5 days"],
+  
+];
+/* Shown when no matching image is found in the folder */
+const FALLBACK="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#c9c2ae"/><circle cx="32" cy="35" r="9" fill="#e8e1cf"/><path d="M10 85l28-30 18 18 14-12 20 24z" fill="#e8e1cf"/></svg>');
+const grid=document.getElementById("grid");
+items.forEach(([slug,name,price,eta])=>{
+  const c=document.createElement("article");
+  c.className="card";
+  c.innerHTML=`<div class="pic" role="img" aria-label="${name}, out of stock"><img src="${IMAGE_FOLDER}${slug}.${EXTENSIONS[0]}" alt="" loading="lazy"></div>
+    <h2>${name}</h2><div class="price">${price}</div><div class="restock">${eta}</div>
+    <button class="notify" type="button">Remind me</button>`;
+  const img=c.querySelector("img");let tried=0;
+  img.addEventListener("error",()=>{
+    tried++;
+    img.src=tried<EXTENSIONS.length?`${IMAGE_FOLDER}${slug}.${EXTENSIONS[tried]}`:FALLBACK;
+  });
+  c.querySelector("button").addEventListener("click",e=>{
+    e.target.disabled=true;e.target.textContent="We'll remind you";
+  });
+  grid.appendChild(c);
+});
+document.getElementById("cart").addEventListener("click",()=>{
+  const m=document.getElementById("msg");
+  m.textContent="Your cart is empty. Everything is out of stock for now.";
+});
+document.getElementById("join").addEventListener("click",()=>{
+  const v=document.getElementById("email").value.trim();
+  const m=document.getElementById("msg");
+  m.textContent=/^\S+@\S+\.\S+$/.test(v)?"Thanks! We'll email you when we restock.":"Enter a valid email address.";
+});
+</script>
+</body>
+</html>
